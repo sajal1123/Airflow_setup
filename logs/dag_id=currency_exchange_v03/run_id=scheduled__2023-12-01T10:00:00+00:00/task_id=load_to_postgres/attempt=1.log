@@ -1,0 +1,20 @@
+[2023-12-12T23:34:41.969+0000] {taskinstance.py:1159} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: currency_exchange_v03.load_to_postgres scheduled__2023-12-01T10:00:00+00:00 [queued]>
+[2023-12-12T23:34:42.128+0000] {taskinstance.py:1159} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: currency_exchange_v03.load_to_postgres scheduled__2023-12-01T10:00:00+00:00 [queued]>
+[2023-12-12T23:34:42.143+0000] {taskinstance.py:1361} INFO - Starting attempt 1 of 4
+[2023-12-12T23:34:42.417+0000] {taskinstance.py:1382} INFO - Executing <Task(PythonOperator): load_to_postgres> on 2023-12-01 10:00:00+00:00
+[2023-12-12T23:34:42.679+0000] {standard_task_runner.py:57} INFO - Started process 32426 to run task
+[2023-12-12T23:34:42.793+0000] {standard_task_runner.py:84} INFO - Running: ['***', 'tasks', 'run', 'currency_exchange_v03', 'load_to_postgres', 'scheduled__2023-12-01T10:00:00+00:00', '--job-id', '451', '--raw', '--subdir', 'DAGS_FOLDER/currency_exchange_dag.py', '--cfg-path', '/tmp/tmpf38gezp6']
+[2023-12-12T23:34:42.891+0000] {standard_task_runner.py:85} INFO - Job 451: Subtask load_to_postgres
+[2023-12-12T23:34:45.074+0000] {task_command.py:416} INFO - Running <TaskInstance: currency_exchange_v03.load_to_postgres scheduled__2023-12-01T10:00:00+00:00 [running]> on host d5f251ea7e03
+[2023-12-12T23:34:45.588+0000] {taskinstance.py:1662} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='currency' AIRFLOW_CTX_DAG_ID='currency_exchange_v03' AIRFLOW_CTX_TASK_ID='load_to_postgres' AIRFLOW_CTX_EXECUTION_DATE='2023-12-01T10:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2023-12-01T10:00:00+00:00'
+[2023-12-12T23:34:45.697+0000] {base.py:73} INFO - Using connection ID 'currency' for task execution.
+[2023-12-12T23:34:46.177+0000] {sql.py:418} INFO - Running statement: 
+        INSERT INTO usd_exchange_rate(dt, euro, yen, inr)
+        VALUES (%s, %s, %s, %s);
+    , parameters: ('2023-12-01', 0.91658956, 147.73773404, 83.32428631)
+[2023-12-12T23:34:46.222+0000] {sql.py:427} INFO - Rows affected: 1
+[2023-12-12T23:34:46.264+0000] {logging_mixin.py:154} INFO - Data loaded into PostgreSQL
+[2023-12-12T23:34:46.274+0000] {python.py:194} INFO - Done. Returned value was: None
+[2023-12-12T23:34:46.379+0000] {taskinstance.py:1400} INFO - Marking task as SUCCESS. dag_id=currency_exchange_v03, task_id=load_to_postgres, execution_date=20231201T100000, start_date=20231212T233441, end_date=20231212T233446
+[2023-12-12T23:34:46.672+0000] {local_task_job_runner.py:228} INFO - Task exited with return code 0
+[2023-12-12T23:34:48.740+0000] {taskinstance.py:2778} INFO - 0 downstream tasks scheduled from follow-on schedule check
