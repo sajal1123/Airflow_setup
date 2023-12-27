@@ -7,9 +7,9 @@ import requests
 
 default_args = {
     'owner': 'currency',
-    'start_date': datetime(2023, 12, 1),
+    'start_date': datetime(2023, 1, 1),
     'retries': 3,
-    'retry_delay': timedelta(minutes=5),
+    'retry_delay': timedelta(minutes=1),
 }
 
 def clean_currency(currency):
@@ -44,13 +44,24 @@ def fetch_exchange_rates_task(**kwargs):
 def load_data_task(**kwargs):
     ti = kwargs['ti']
     exchange_rates_data = ti.xcom_pull(task_ids='fetch_exchange_rates')
+
+    print("exchange rastes data = \n", exchange_rates_data)
+
+    sql_clean = """
+        DELETE FROM usd_exchange_rate
+        WHERE dt = (%s);
+    """
     
-    sql = """
+    sql_insert = """
         INSERT INTO usd_exchange_rate(dt, euro, yen, inr)
         VALUES (%s, %s, %s, %s);
     """
     
-    values = (
+    values_delete = (
+        exchange_rates_data["date"],
+    )
+
+    values_insert = (
         exchange_rates_data["date"],
         exchange_rates_data["eur"],
         exchange_rates_data["jpy"],
@@ -59,12 +70,13 @@ def load_data_task(**kwargs):
 
     # Execute the SQL statement
     hook = PostgresHook(postgres_conn_id="currency")
-    hook.run(sql, parameters=values)
+    hook.run(sql_clean, parameters=values_delete)
+    hook.run(sql_insert, parameters=values_insert)
 
     print("Data loaded into PostgreSQL")
 
 with DAG(
-    dag_id="currency_exchange_v03",
+    dag_id="currency_exchange_v11",
     default_args=default_args,
     description='ETL process for currency exchange data',
     schedule_interval="0 10 * * *",  # Set your desired schedule
