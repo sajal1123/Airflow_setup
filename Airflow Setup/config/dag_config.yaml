@@ -1,0 +1,15 @@
+credentials:
+  news_api_key: 85194d9ee83f4474b57f0c9718a5a319
+  openai_api_key: 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
+
+news:
+ url: https://newsapi.org/v2/
+ everything:
+  from: 2023-11-15
+  to: 2023-11-15
+  query: "NASDAQ"
+ top_headlines:
+  country: us
+  query: "stock market"
+
+
