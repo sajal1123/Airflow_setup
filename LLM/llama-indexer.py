@@ -5,11 +5,16 @@ from transformers import AutoTokenizer
 from llama_index.embeddings import HuggingFaceEmbedding
 from llama_index import ServiceContext
 from llama_index import VectorStoreIndex, SimpleDirectoryReader
+import json
 
-os.environ["REPLICATE_API_TOKEN"] = "r8_BOalg4ka8u21B7pF6DPcoRlxVfoKAHD3H7a8z"
+# Read the constants from the JSON file
+with open('../config.json') as f:
+    constants = json.load(f)
+
+os.environ["REPLICATE_API_TOKEN"] = constants["REPLICATE_API_KEY"]
 
 
-llama2_7b_chat = "meta/llama-2-7b-chat:8e6975e5ed6174911a6ff3d60540dfd4844201974602551e10e9e87ab143d81e"
+llama2_7b_chat = constants["llama_chat_model"]
 llm = Replicate(
     model=llama2_7b_chat,
     temperature=0.75,
@@ -27,8 +32,8 @@ set_global_tokenizer(
 
 print("global tokenizer set!!!")
 
-
-embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-small-en-v1.5")
+hf_model_name = constants["hf_embedding_model"]
+embed_model = HuggingFaceEmbedding(model_name=hf_model_name)
 service_context = ServiceContext.from_defaults(
     llm=llm, embed_model=embed_model
 )
