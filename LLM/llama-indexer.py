@@ -11,7 +11,7 @@ import json
 with open('../config.json') as f:
     constants = json.load(f)
 
-os.environ["REPLICATE_API_TOKEN"] = constants["REPLICATE_API_KEY"]
+os.environ["REPLICATE_API_TOKEN"] = constants["REPLICATE_API_TOKEN"]
 
 
 llama2_7b_chat = constants["llama_chat_model"]
@@ -20,7 +20,7 @@ llm = Replicate(
     temperature=0.75,
     additional_kwargs={"top_p": 0.5,
                        "max_new_tokens": 10000000, 
-                       "system_prompt": "You are a reporter that provides crisp summaries of the last day's events in 2500 to 2700 words."},
+                       "system_prompt": "You are a reporter that provides summaries of the last day's events."},
 )
 
 print("set tokenizer to match LLM...")
@@ -52,32 +52,19 @@ index = VectorStoreIndex.from_documents(
 print("asking query...")
 
 query_engine = index.as_query_engine(similarity_top_k=5, streaming=True)
-# response1 = query_engine.query("Who is the greatest footballer ever?")
-# response2 = query_engine.query("How many Ballon d'Ors does Messi have?")
-# response3 = query_engine.query("What did Ron de Santis do?")
-# response4 = query_engine.query("Was there any sports news?")
-# response5 = query_engine.query("How's the weather in Kansas City?")
-# response6 = query_engine.query("Tell me about the Ram Temple in Ayodhya")
 
 summary = query_engine.query("Based on the provided data, write a 2500-2700 word long article of all the major news events of the past day. \
-    You can omit less relevant news and add some creativity in your presentation, but make sure that you keep the important details\
-        (like names, dates, and other information)in your write up. \. Make sure that you write this summary as if you are a reporter narrating the news.")
+    Break your report down in the following sections: Technology, Politics, International news, Sports, and the Stock Market.\
+    Mention relevant information (like names, dates, and other information)in your write up.\
+    Do not say phrases like 'Based on the given data', 'According to the given information', etc. to start.\
+    Talk about the topic directly.")
 
 stocks = query_engine.query("Tell me about the stock market. Is it a good time to invest?")
-
-# print("Document : \n\n\n", documents)
-# print("The Greatest Footballer Ever - \n\n", response1)
-# print("Messi's achievements - \n\n", response2)
-# print("Ron de Santis question ::: ", response3)
-# print("Sports news ::: ", response4)
-# print("Kansas City Weather ::: ", response5)
-# print("Ram Mandir info ::: ", response6)
-
 
 print("\n\n\nSUMMARY OF THE DAY\n\n\n")
 summary.print_response_stream()
 
 print("\n\nSTOCKS\n\n", stocks)
 
-stanford = query_engine.query("Was there any news about Stanford?")
-print("\n\nSTANFORD\n\n", stanford)
+stanford = query_engine.query("Was there any news about India?")
+print("\n\India\n\n", stanford)
