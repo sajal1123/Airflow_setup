@@ -48,7 +48,7 @@ index = VectorStoreIndex.from_documents(
     documents,
     service_context=service_context
 )
-
+print("start of index : ", index[:100])
 print("asking query...")
 
 query_engine = index.as_query_engine(similarity_top_k=5, streaming=True)
