@@ -1,0 +1,14 @@
+{
+    "REPLICATE_API_TOKEN" : "r8_BOalg4ka8u21B7pF6DPcoRlxVfoKAHD3H7a8z",
+    "llama_chat_model": "meta/llama-2-7b-chat:8e6975e5ed6174911a6ff3d60540dfd4844201974602551e10e9e87ab143d81e",
+    "hf_embedding_model": "BAAI/bge-small-en-v1.5",
+    "Email_id": "daily.messenger.service@gmail.com",
+    "Email_password": "fkruypoasaccxqdo",
+    "Postgres_user": "golang",
+    "Postgres_password": "password",
+    "Postgres_db_name": "postgres",
+    "Postgres_host": "localhost",
+    "Postgres_port": "5433",
+    "ssl_mode": "disable",
+    "chat-send-message": "http://localhost:8080/query"
+}

@@ -6,6 +6,9 @@ from llama_index.embeddings import HuggingFaceEmbedding
 from llama_index import ServiceContext
 from llama_index import VectorStoreIndex, SimpleDirectoryReader
 import json
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
 
 # Read the constants from the JSON file
 with open('../config.json') as f:
@@ -20,7 +23,7 @@ llm = Replicate(
     temperature=0.75,
     additional_kwargs={"top_p": 0.5,
                        "max_new_tokens": 10000000, 
-                       "system_prompt": "You are a reporter that provides summaries of the last day's events."},
+                       "system_prompt": "You are a conversational chat bot. Be pleasant to the user, and answer any questions they ask. Only respond to the latest query and do it concisely."},
 )
 
 print("set tokenizer to match LLM...")
@@ -48,23 +51,42 @@ index = VectorStoreIndex.from_documents(
     documents,
     service_context=service_context
 )
-print("start of index : ", index[:100])
+# print("start of index : ", index[:100])
 print("asking query...")
 
 query_engine = index.as_query_engine(similarity_top_k=5, streaming=True)
 
-summary = query_engine.query("Based on the provided data, write a 2500-2700 word long article of all the major news events of the past day. \
-    Break your report down in the following sections: Technology, Politics, International news, Sports, and the Stock Market.\
-    Mention relevant information (like names, dates, and other information)in your write up.\
-    Do not say phrases like 'Based on the given data', 'According to the given information', etc. to start.\
-    Talk about the topic directly.")
 
-stocks = query_engine.query("Tell me about the stock market. Is it a good time to invest?")
+@app.route('/query', methods=['POST'])
+def query():
+    data = request.get_json()
+    print("received query = ", data)
+    query_text = data.get('query', '')
 
-print("\n\n\nSUMMARY OF THE DAY\n\n\n")
-summary.print_response_stream()
+    summary = query_engine.query(query_text)
 
-print("\n\nSTOCKS\n\n", stocks)
+    responseObj = summary.get_response()
 
-stanford = query_engine.query("Was there any news about India?")
-print("\n\India\n\n", stanford)
+    print("Got summary -> ", type(responseObj.response), responseObj.response)
+
+    return jsonify({'summary': responseObj.response})
+
+if __name__ == '__main__':
+    print("Running LLM Servie on :5000...\n")
+    app.run(host='0.0.0.0', port=5000)
+
+# summary = query_engine.query("Based on the provided data, write a 2500-2700 word long article of all the major news events of the past day. \
+#     Break your report down in the following sections: Technology, Politics, International news, Sports, and the Stock Market.\
+#     Mention relevant information (like names, dates, and other information)in your write up.\
+#     Do not say phrases like 'Based on the given data', 'According to the given information', etc. to start.\
+#     Talk about the topic directly.")
+
+# stocks = query_engine.query("Tell me about the stock market. Is it a good time to invest?")
+
+# print("\n\n\nSUMMARY OF THE DAY\n\n\n")
+# summary.print_response_stream()
+
+# print("\n\nSTOCKS\n\n", stocks)
+
+# stanford = query_engine.query("Was there any news about India?")
+# print("\n\India\n\n", stanford)
