@@ -1,7 +1,3 @@
-Certainly! Here's a README template for your project:
-
----
-
 # Blended Bytes
 
 Blended Bytes is a news summarization and delivery system that combines the power of Airflow, llama-indexer, and Golang to provide users with a personalized daily news digest.
